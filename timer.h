@@ -1,13 +1,12 @@
+#ifndef ZZ_TIMER
+#define ZZ_TIMER
+
 #include <iostream>
 #include <chrono>
 #include <stdlib.h>
 #include <unistd.h>
 
 using namespace std;
-
-void ExampleFunction() {
-	sleep(10);
-}
 
 class Timer {
 public:
@@ -20,3 +19,5 @@ public:
 	chrono::steady_clock::time_point start_tp_;
 };
 static Timer timer;
+
+#endif
