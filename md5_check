@@ -1,0 +1,81 @@
+#include <iostream>
+#include <map>
+#include <fstream>
+#include <vector>
+#include <stdint.h>
+#include <string.h>
+
+using namespace std;
+
+//数据格式，每行做key，每行出现的次数为value
+typedef map<string, int32_t> Map;
+
+//将文件解析为vector<string>
+void GetVecFromFile(const string& str, vector<string>& res) {
+    ifstream ifstr(str.c_str());
+    const int32_t len = 1024;
+    char tmp[len];
+    while(!ifstr.eof()) {
+        memset(tmp, 0x00, len);
+        ifstr.getline(tmp, len);
+        res.push_back(string(tmp, strlen(tmp)));
+    }
+}
+
+//将vector<string>解析成map
+void VecToMap(const vector<string>& vec, Map &res) {
+    for (auto &i:vec) {
+        res[i] += 1;
+    }
+}
+
+//做l-r操作，并将剩余数据放在l中
+void SubMap(Map &l, const Map& r) {
+    for (const auto &i : r) {
+        l[i.first] -= i.second;
+    }
+}
+
+//做l+r操作，将加和数据放在l中
+void AddMap(Map &l, const Map& r) {
+    for (const auto &i : r) {
+        l[i.first] += i.second;
+    }
+}
+
+//check 某个map中key对应的value是否全为0.
+void Check0Map(const Map& tmp) {
+    for (const auto &i:tmp) {
+        if(i.second != 0) {
+            cout << "find a element without 0 ." << i.first << endl;
+            return ;
+        }
+    }
+}
+
+int main() {
+    Map ms[6];
+    vector<string> vs[6];
+    GetVecFromFile("afo_1_md5", vs[0]);
+    GetVecFromFile("afo_2_md5", vs[1]);
+    GetVecFromFile("afo_3_md5", vs[2]);
+    VecToMap(vs[0], ms[0]);
+    VecToMap(vs[1], ms[1]);
+    VecToMap(vs[2], ms[2]);
+    AddMap(ms[0], ms[1]);
+    AddMap(ms[0], ms[2]);
+    std::cout << "-----" << std::endl;
+    GetVecFromFile("tfr_0_md5", vs[3]);
+    GetVecFromFile("tfr_1_md5", vs[4]);
+    GetVecFromFile("tfr_2_md5", vs[5]);
+    VecToMap(vs[3], ms[3]);
+    VecToMap(vs[4], ms[4]);
+    VecToMap(vs[5], ms[5]);
+    AddMap(ms[3], ms[4]);
+    AddMap(ms[3], ms[5]);
+
+    SubMap(ms[0], ms[3]);
+
+    Check0Map(ms[0]);
+    return 0;
+}
